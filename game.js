@@ -3,6 +3,8 @@ let resources = {
     food: 0,
     water: 0,
     health: 100,
+    wood: 0,
+    stone: 0,
 };
 
 let day = 1;
@@ -41,13 +43,38 @@ function updateDayNightCycle() {
     const currentTime = (day - 1) * secondsPerDay + (performance.now() % secondsPerDay);
     timeOfDay = currentTime < secondsPerHalfDay ? 'Day' : 'Night';
 
-    // If the day ends, reset resources
+    // If the day ends, reset resources and trigger events
     if (currentTime >= secondsPerDay) {
         day++;
         resources.food = 0;
         resources.water = 0;
         resources.health = 100;
+
+        // Random event: Day-end event
+        const dayEndEvent = Math.random();
+        if (dayEndEvent < 0.2) {
+            // 20% chance of a positive event
+            resources.wood += 5;
+            resources.stone += 5;
+            showEventMessage("You found some resources in the forest!");
+        } else if (dayEndEvent < 0.4) {
+            // 20% chance of a negative event
+            resources.health -= 10;
+            showEventMessage("You caught a cold during the night!");
+        }
     }
+}
+
+// Show event message
+function showEventMessage(message) {
+    const eventElement = document.getElementById('event-message');
+    eventElement.innerText = message;
+    eventElement.style.visibility = 'visible';
+
+    // Hide the event message after 3 seconds
+    setTimeout(() => {
+        eventElement.style.visibility = 'hidden';
+    }, 3000);
 }
 
 // Collect food
@@ -73,9 +100,13 @@ function craftItems() {
 function explore() {
     const randomFood = Math.random() * 5 + 1;
     const randomWater = Math.random() * 5 + 1;
+    const randomWood = Math.random() * 3 + 1;
+    const randomStone = Math.random() * 2 + 1;
 
     resources.food += randomFood;
     resources.water += randomWater;
+    resources.wood += randomWood;
+    resources.stone += randomStone;
 }
 
 // Render game elements
@@ -86,6 +117,8 @@ function render() {
     document.getElementById('health-stat').innerText = `Health: ${resources.health.toFixed(2)}%`;
     document.getElementById('day-stat').innerText = `Day: ${day}`;
     document.getElementById('time-stat').innerText = `Time: ${timeOfDay}`;
+    document.getElementById('wood-stat').innerText = `Wood: ${Math.floor(resources.wood)}`;
+    document.getElementById('stone-stat').innerText = `Stone: ${Math.floor(resources.stone)}`;
 }
 
 // Add event listeners to resource buttons and explore button
