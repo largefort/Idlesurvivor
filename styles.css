@@ -50,3 +50,9 @@ body {
 #stats p {
     margin: 5px;
 }
+
+#event-message {
+    visibility: hidden;
+    margin-top: 10px;
+    font-weight: bold;
+}
