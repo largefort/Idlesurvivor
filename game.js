@@ -10,6 +10,11 @@ let resources = {
 let day = 1;
 let timeOfDay = 'Day';
 
+// Load game data from local storage, if available
+if (localStorage.getItem('idleSurvivorGame')) {
+    resources = JSON.parse(localStorage.getItem('idleSurvivorGame'));
+}
+
 // Game loop
 function gameLoop() {
     // Update game elements
@@ -18,6 +23,9 @@ function gameLoop() {
 
     // Render game elements
     render();
+
+    // Save game data to local storage
+    saveGame();
 
     // Repeat the game loop
     requestAnimationFrame(gameLoop);
@@ -29,8 +37,8 @@ function updateResources() {
     resources.water += 0.5; // Increment water over time
     resources.health -= 0.05; // Health gradually decreases
 
-    // Ensure health doesn't go below 0
-    resources.health = Math.max(resources.health, 0);
+    // Ensure health doesn't go below 0 or above 100
+    resources.health = Math.min(Math.max(resources.health, 0), 100);
 }
 
 // Update the day-night cycle
@@ -115,10 +123,10 @@ function render() {
     document.getElementById('food-stat').innerText = `Food: ${Math.floor(resources.food)}`;
     document.getElementById('water-stat').innerText = `Water: ${Math.floor(resources.water)}`;
     document.getElementById('health-stat').innerText = `Health: ${resources.health.toFixed(2)}%`;
-    document.getElementById('day-stat').innerText = `Day: ${day}`;
-    document.getElementById('time-stat').innerText = `Time: ${timeOfDay}`;
     document.getElementById('wood-stat').innerText = `Wood: ${Math.floor(resources.wood)}`;
     document.getElementById('stone-stat').innerText = `Stone: ${Math.floor(resources.stone)}`;
+    document.getElementById('day-stat').innerText = `Day: ${day}`;
+    document.getElementById('time-stat').innerText = `Time: ${timeOfDay}`;
 }
 
 // Add event listeners to resource buttons and explore button
